@@ -15,7 +15,27 @@ function index(req, res) {
 }
 
 function show(req, res) {
-    res.send('Dettaglio del post')
+    const { id } = req.params
+
+    const filmSql = `SELECT * FROM movies WHERE id = ?`;
+
+    const reviewsSql = `SELECT * FROM reviews WHERE movie_id = ?`
+
+    connection.query(filmSql, [id], (err, filmResults) => {
+        if (err) {
+            return res.status(500).json({ error: "database query failed: " + err });
+        }
+
+        const film = filmResults[0];
+
+        connection.query(reviewsSql, [id], (err, reviewsResults) => {
+            if (err) {
+                return res.status(500).json({ error: "database query failed: " + err });
+            }
+            film.reviews = reviewsResults;
+            res.json(film);
+        })
+    })
 }
 
 module.exports = { index, show }

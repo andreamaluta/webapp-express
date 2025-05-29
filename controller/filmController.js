@@ -7,3 +7,5 @@ function index(req, res) {
 function show(req, res) {
     res.send('Dettaglio del post')
 }
+
+module.exports = { index, show }

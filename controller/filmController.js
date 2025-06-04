@@ -8,6 +8,16 @@ function index(req, res) {
         if (err) {
             return res.status(500).json({ error: 'Database query failed' });
         }
+
+        // const films = filmResults.map((film) => {
+        //     const obj = {
+        //         ...film,
+        //         image: req.imagePath + film.image
+        //     }
+
+        //     return obj;
+        // })
+
         console.log(results);
         res.json(results);
     });
@@ -38,4 +48,19 @@ function show(req, res) {
     })
 }
 
-module.exports = { index, show }
+const storeReview = (req, res) => {
+    const { id } = req.params;
+
+    const { text, name, vote } = req.body;
+
+    const sql = "INSERT INTO reviews (text, vote, name, movie_id) VALUE (?, ?, ?, ?)";
+
+    connection.query(sql, [text, vote, name, id], (err, result) => {
+        if (err) { console.log(err); return res.status(500).json({ error: "database query failed" }) };
+
+        res.status(201).json({ message: "recensione inserita", id: result.insertId })
+    })
+
+}
+
+module.exports = { index, show, storeReview }
